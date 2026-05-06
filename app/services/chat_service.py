@@ -10,6 +10,7 @@ from app.core.config import get_vector_store
 from app.core.dependencies import create_embeddings, create_model
 from app.db.models import Conversation, Message
 from app.repository.message_repository import MessageRepository
+from app.services.prompt_registry import PromptRegistry
 
 embeddings = create_embeddings()
 model = create_model()
@@ -22,6 +23,7 @@ class RAGState(TypedDict):
     history: list[Message]
     context: str
     answer: str
+    user_id: str | None
 
 
 async def _retrieve_docs(state: RAGState) -> dict:
@@ -30,36 +32,35 @@ async def _retrieve_docs(state: RAGState) -> dict:
     results = await asyncio.to_thread(
         vector_store.similarity_search_by_vector, question_embedding, k=2
     )
-    context = "\n\n".join(doc.page_content for doc in results)
-    return {"context": context}
-
-
-def _build_prompt(state: RAGState) -> str:
-    history_block = "\n".join(f"{m.role}: {m.content}" for m in state["history"])
-    return (
-        "Use the context below and the prior conversation to answer the question.\n\n"
-        f"Context:\n{state['context']}\n\n"
-        f"Conversation so far:\n{history_block}\n\n"
-        f"Question: {state['question']}"
-    )
+    return {"context": "\n\n".join(doc.page_content for doc in results)}
 
 
 async def _generate_answer(state: RAGState) -> dict:
-    prompt = _build_prompt(state)
+    registry = PromptRegistry.get()
+    prompt_template = await registry.resolve(
+        "rag-prompt",
+        user_id=state.get("user_id"),
+    )
+
+    history_block = "\n".join(f"{m.role}: {m.content}" for m in state["history"])
+    prompt = await asyncio.to_thread(
+        prompt_template.format,
+        context=state["context"],
+        history=history_block,
+        question=state["question"],
+    )
+
     response = await model.ainvoke(prompt)
     return {"answer": response.content}
 
 
 def _build_graph() -> StateGraph:
     graph = StateGraph(RAGState)
-
     graph.add_node("retrieve", _retrieve_docs)
     graph.add_node("generate", _generate_answer)
-
     graph.set_entry_point("retrieve")
     graph.add_edge("retrieve", "generate")
     graph.add_edge("generate", END)
-
     return graph.compile()
 
 
@@ -77,6 +78,7 @@ class ChatService:
         question: str,
         collection_name: str,
         auto_title: str | None = None,
+        user_id: str | None = None,
     ) -> AsyncIterator[str]:
         history = await self.message_repo.list_by_conversation(conversation.id)
 
@@ -88,11 +90,8 @@ class ChatService:
         )
         await self.db.commit()
 
-        # Capture the tracing context here (inside the request) and pass it
-        # into the generator so LangSmith receives the run even after the
-        # async handoff to StreamingResponse.
         run_id = uuid4()
-        return self._stream(conversation, question, collection_name, history, run_id)
+        return self._stream(conversation, question, collection_name, history, run_id, user_id)
 
     async def _stream(
         self,
@@ -101,6 +100,7 @@ class ChatService:
         collection_name: str,
         history: list[Message],
         run_id: UUID,
+        user_id: str | None,
     ) -> AsyncIterator[str]:
         initial_state: RAGState = {
             "question": question,
@@ -109,9 +109,14 @@ class ChatService:
             "history": history,
             "context": "",
             "answer": "",
+            "user_id": user_id,
         }
 
-        config = {"run_id": run_id, "run_name": "rag-chat"}
+        config = {
+            "run_id": run_id,
+            "run_name": "rag-chat",
+            "metadata": {"user_id": user_id},
+        }
 
         buffer: list[str] = []
         try:

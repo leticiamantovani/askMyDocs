@@ -25,7 +25,7 @@ async def get_answer(
     auto_title = request.question[:60].strip() if not conversation.title else None
 
     stream = await chat_service.stream_answer(
-        conversation, request.question, f"user_{user_id}", auto_title
+        conversation, request.question, f"user_{user_id}", auto_title, user_id
     )
     return StreamingResponse(
         stream,
