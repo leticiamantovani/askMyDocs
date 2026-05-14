@@ -39,3 +39,12 @@ async def list_messages(
     service: ConversationService = Depends(get_conversation_service),
 ):
     return await service.list_messages(conversation_id)
+
+
+@router.delete("/{conversation_id}", status_code=204)
+async def delete_conversation(
+    conversation_id: UUID,
+    user_id: str = Depends(get_current_user_id),
+    service: ConversationService = Depends(get_conversation_service),
+):
+    await service.delete(conversation_id, UUID(user_id))

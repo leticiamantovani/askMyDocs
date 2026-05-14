@@ -11,7 +11,7 @@ import { ForgotPasswordPage } from "./pages/ForgotPasswordPage"
 import { LoginPage } from "./pages/LoginPage"
 import { ProfilePage } from "./pages/ProfilePage"
 import { ResetPasswordPage } from "./pages/ResetPasswordPage"
-import { deleteDocument, getMe, isAuthenticated, listConversations, listDocuments, logout } from "./services/api"
+import { deleteConversation, deleteDocument, getMe, isAuthenticated, listConversations, listDocuments, logout } from "./services/api"
 import type { Conversation, Document, Message } from "./types"
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -81,6 +81,12 @@ function ChatPage() {
     setSystemMessages([])
   }, [])
 
+  const handleDeleteConversation = useCallback(async (id: string) => {
+    await deleteConversation(id)
+    setConversations((prev) => prev.filter((c) => c.id !== id))
+    if (conversationId === id) handleNewConversation()
+  }, [conversationId, handleNewConversation])
+
   const handleUploadSuccess = useCallback((doc: Document) => {
     setDocuments((prev) => [doc, ...prev])
     setActiveDocumentId(doc.id)
@@ -103,6 +109,7 @@ function ChatPage() {
         isNewSession={!conversationId}
         onSelect={handleSelectConversation}
         onNew={handleNewConversation}
+        onDelete={handleDeleteConversation}
         loading={sidebarLoading}
         userName={userName}
       />

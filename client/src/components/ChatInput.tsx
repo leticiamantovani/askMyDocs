@@ -40,7 +40,7 @@ export function ChatInput({ onSend, disabled }: Props) {
         value={value}
         onChange={handleInput}
         onKeyDown={handleKeyDown}
-        placeholder="Ask something… (Enter to send, Shift+Enter for newline)"
+        placeholder="Ask anything about this document…"
         rows={1}
         disabled={disabled}
       />

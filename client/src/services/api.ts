@@ -139,6 +139,14 @@ export async function getConversationMessages(conversationId: string): Promise<A
   return response.json()
 }
 
+export async function deleteConversation(conversationId: string): Promise<void> {
+  const response = await fetch(`${BASE_URL}/conversations/${conversationId}`, {
+    method: "DELETE",
+    headers: { ...authHeaders() },
+  })
+  await assertOk(response)
+}
+
 export async function listConversations(): Promise<Conversation[]> {
   const response = await fetch(`${BASE_URL}/conversations`, {
     headers: { ...authHeaders() },

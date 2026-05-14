@@ -718,7 +718,7 @@ body { margin: 0; background: var(--bg); }
   box-shadow: var(--shadow-md);
 }
 
-.profile__header { display: flex; align-items: center; gap: 0.875rem; }
+.profile__header { display: flex; align-items: center; gap: 0.875rem; position: relative; }
 
 .profile__back {
   background: var(--surface-2);
@@ -735,10 +735,14 @@ body { margin: 0; background: var(--bg); }
 .profile__back:hover { color: var(--text-1); border-color: var(--border-md); }
 
 .profile__title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--text-1);
+  white-space: nowrap;
 }
 
 .profile__section { display: flex; flex-direction: column; gap: 1rem; }
@@ -780,3 +784,109 @@ body { margin: 0; background: var(--bg); }
 .message__bubble th,
 .message__bubble td { border: 1px solid var(--border-md); padding: 0.35rem 0.625rem; text-align: left; }
 .message__bubble th { background: var(--surface-3); font-weight: 600; }
+
+/* ── Sidebar delete button ──────────────────────────────────────────────── */
+.sidebar__item {
+  position: relative;
+}
+.sidebar__item-delete {
+  position: absolute;
+  right: 0.375rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-3);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+.sidebar__item:hover .sidebar__item-delete { opacity: 1; }
+.sidebar__item-delete:hover { color: var(--error); background: rgba(248,113,113,0.1); }
+
+/* ── Confirm modal ──────────────────────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fade-in 0.15s ease;
+}
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border-md);
+  border-top: 1px solid rgba(124,108,252,0.25);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: var(--shadow-lg), 0 0 60px rgba(0,0,0,0.5);
+  animation: modal-in 0.18s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.modal__title {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-1);
+}
+
+.modal__description {
+  font-size: 0.875rem;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+
+.modal__actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.modal__cancel {
+  background: transparent;
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-md);
+  color: var(--text-2);
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: inherit;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.modal__cancel:hover { border-color: var(--border-md); color: var(--text-1); }
+
+.modal__confirm {
+  background: var(--error);
+  border: none;
+  border-radius: var(--radius-md);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.modal__confirm:hover { opacity: 0.88; transform: translateY(-1px); }
+.modal__confirm:active { transform: translateY(0); }
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modal-in { from { opacity: 0; transform: scale(0.94) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }

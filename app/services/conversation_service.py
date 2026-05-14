@@ -50,3 +50,9 @@ class ConversationService:
     async def list_messages(self, conversation_id: UUID) -> list[Message]:
         await self.get(conversation_id)
         return await self.message_repo.list_by_conversation(conversation_id)
+
+    async def delete(self, conversation_id: UUID, user_id: UUID) -> None:
+        conversation = await self.conversation_repo.get(conversation_id)
+        if not conversation or conversation.user_id != user_id:
+            raise ConversationNotFoundError(f"Conversation not found: {conversation_id}")
+        await self.conversation_repo.delete(conversation)

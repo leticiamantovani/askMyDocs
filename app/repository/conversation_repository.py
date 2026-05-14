@@ -23,3 +23,7 @@ class ConversationRepository:
             .order_by(Conversation.created_at.desc())
         )
         return list(result.scalars().all())
+
+    async def delete(self, conversation: Conversation) -> None:
+        await self.db.delete(conversation)
+        await self.db.commit()
