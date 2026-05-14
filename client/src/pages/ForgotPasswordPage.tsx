@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import { BrandLogo } from "../components/BrandLogo"
 import { forgotPassword } from "../services/api"
 
 export function ForgotPasswordPage() {
@@ -26,9 +27,7 @@ export function ForgotPasswordPage() {
     <div className="auth">
       <div className="auth__card">
         <div className="auth__logo">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-          </svg>
+          <BrandLogo />
         </div>
         <h1 className="auth__title">AskMyDocs</h1>
         <p className="auth__subtitle">Forgot your password?</p>

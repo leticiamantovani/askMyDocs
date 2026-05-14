@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
+import { BrandLogo } from "../components/BrandLogo"
 import { resetPassword } from "../services/api"
 
 export function ResetPasswordPage() {
@@ -45,9 +46,7 @@ export function ResetPasswordPage() {
     <div className="auth">
       <div className="auth__card">
         <div className="auth__logo">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-          </svg>
+          <BrandLogo />
         </div>
         <h1 className="auth__title">AskMyDocs</h1>
         <p className="auth__subtitle">New password</p>
