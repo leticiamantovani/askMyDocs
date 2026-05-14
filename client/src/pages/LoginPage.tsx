@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react"
+import { useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { login, register } from "../services/api"
 
@@ -8,12 +8,13 @@ export function LoginPage() {
   const successMessage = (location.state as { message?: string } | null)?.message
   const [mode, setMode] = useState<"login" | "register">("login")
   const [email, setEmail] = useState("")
+  const [name, setName] = useState("")
   const [password, setPassword] = useState("")
   const [confirm, setConfirm] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (mode === "register" && password !== confirm) {
       setError("Passwords do not match.")
@@ -23,7 +24,7 @@ export function LoginPage() {
     setLoading(true)
     try {
       if (mode === "register") {
-        await register(email, password)
+        await register(email, password, name)
         await login(email, password)
       } else {
         await login(email, password)
@@ -36,6 +37,13 @@ export function LoginPage() {
     }
   }
 
+  function switchMode(next: "login" | "register") {
+    setMode(next)
+    setName("")
+    setConfirm("")
+    setError(null)
+  }
+
   return (
     <div className="auth">
       <div className="auth__card">
@@ -46,14 +54,14 @@ export function LoginPage() {
         <div className="auth__tabs">
           <button
             className={`auth__tab ${mode === "login" ? "auth__tab--active" : ""}`}
-            onClick={() => { setMode("login"); setConfirm(""); setError(null) }}
+            onClick={() => switchMode("login")}
             type="button"
           >
             Login
           </button>
           <button
             className={`auth__tab ${mode === "register" ? "auth__tab--active" : ""}`}
-            onClick={() => { setMode("register"); setError(null) }}
+            onClick={() => switchMode("register")}
             type="button"
           >
             Register
@@ -61,6 +69,21 @@ export function LoginPage() {
         </div>
 
         <form className="auth__form" onSubmit={handleSubmit}>
+          {mode === "register" && (
+            <label className="auth__label">
+              Name
+              <input
+                className="auth__input"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                autoFocus
+                placeholder="Your name"
+              />
+            </label>
+          )}
+
           <label className="auth__label">
             Email
             <input
@@ -69,7 +92,7 @@ export function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              autoFocus
+              autoFocus={mode === "login"}
             />
           </label>
 

@@ -25,16 +25,24 @@ async function assertOk(response: Response, message?: string): Promise<void> {
   }
 }
 
-export async function register(email: string, password: string): Promise<void> {
+export async function register(email: string, password: string, name: string): Promise<void> {
   const response = await fetch(`${BASE_URL}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, name }),
   })
   if (!response.ok) {
     const data = await response.json().catch(() => ({}))
     throw new Error(data.detail ?? `HTTP ${response.status}`)
   }
+}
+
+export async function getMe(): Promise<{ id: string; email: string; name: string | null }> {
+  const response = await fetch(`${BASE_URL}/auth/me`, {
+    headers: { ...authHeaders() },
+  })
+  await assertOk(response)
+  return response.json()
 }
 
 export async function login(email: string, password: string): Promise<void> {

@@ -10,7 +10,7 @@ import "./index.css"
 import { ForgotPasswordPage } from "./pages/ForgotPasswordPage"
 import { LoginPage } from "./pages/LoginPage"
 import { ResetPasswordPage } from "./pages/ResetPasswordPage"
-import { isAuthenticated, listConversations, listDocuments, logout } from "./services/api"
+import { getMe, isAuthenticated, listConversations, listDocuments, logout } from "./services/api"
 import type { Conversation, Document, Message } from "./types"
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -24,6 +24,7 @@ function ChatPage() {
   const [activeDocumentId, setActiveDocumentId] = useState<string | null>(null)
   const [sidebarLoading, setSidebarLoading] = useState(false)
   const [systemMessages, setSystemMessages] = useState<Message[]>([])
+  const [userName, setUserName] = useState<string | null>(null)
 
   const [sessionKey, setSessionKey] = useState(() => `new-${Date.now()}`)
   const [sessionConversationId, setSessionConversationId] = useState<string | null>(null)
@@ -54,6 +55,7 @@ function ChatPage() {
   useEffect(() => {
     refreshConversations()
     refreshDocuments()
+    getMe().then((u) => setUserName(u.name)).catch(() => null)
   }, [refreshConversations, refreshDocuments])
 
   useEffect(() => {
@@ -98,7 +100,10 @@ function ChatPage() {
       <div className="main">
         <header className="main__header">
           <PdfDropzone onUploadSuccess={handleUploadSuccess} />
-          <button className="app__logout" onClick={logout}>Logout</button>
+          <div className="header__user">
+            {userName && <span className="header__name">Hi, {userName}</span>}
+            <button className="app__logout" onClick={logout}>Logout</button>
+          </div>
         </header>
 
         <DocumentSelector
