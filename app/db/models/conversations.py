@@ -10,6 +10,7 @@ class Conversation(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    document_id = Column(UUID(as_uuid=True), ForeignKey("documents.id", ondelete="SET NULL"), nullable=True)
     title = Column(String(255), nullable=True)
     created_at = Column(DateTime, server_default=func.now())
     messages = relationship("Message", back_populates="conversation", cascade="all, delete-orphan")

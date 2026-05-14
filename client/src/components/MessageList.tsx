@@ -19,7 +19,12 @@ export function MessageList({ messages }: Props) {
         <div key={msg.id} className={`message message--${msg.role}`}>
           <div className="message__bubble">
             <ReactMarkdown>{msg.content}</ReactMarkdown>
-            {msg.streaming && <span className="message__cursor" />}
+            {msg.streaming && msg.content === "" && (
+              <span className="message__thinking">
+                <span /><span /><span />
+              </span>
+            )}
+            {msg.streaming && msg.content !== "" && <span className="message__cursor" />}
           </div>
         </div>
       ))}

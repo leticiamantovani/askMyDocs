@@ -22,5 +22,6 @@ class ConversationResponse(BaseModel):
 class ConversationListItem(BaseModel):
     id: UUID
     title: str | None
+    document_id: UUID | None = None
     created_at: datetime
     model_config = {"from_attributes": True}

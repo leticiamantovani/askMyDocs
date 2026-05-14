@@ -26,16 +26,18 @@ async def get_answer(
 ):
     uid = UUID(user_id)
 
+    conversation = await conversation_service.resolve(uid, conversation_id)
+    auto_title = request.question[:60].strip() if not conversation.title else None
+
     if request.document_id:
         doc = await DocumentRepository(db).get_by_id(request.document_id, uid)
         if not doc:
             raise NotFoundError("Document not found")
         collection_name = doc.collection_name
+        conversation.document_id = request.document_id
     else:
         collection_name = f"user_{user_id}"
 
-    conversation = await conversation_service.resolve(uid, conversation_id)
-    auto_title = request.question[:60].strip() if not conversation.title else None
 
     user = await get_user_by_id(user_id, db)
     stream = await chat_service.stream_answer(

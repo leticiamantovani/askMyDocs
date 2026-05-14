@@ -66,11 +66,12 @@ function ChatPage() {
     }
   }, [conversationId, refreshConversations])
 
-  const handleSelectConversation = useCallback((id: string) => {
+  const handleSelectConversation = useCallback((id: string, documentId: string | null) => {
     lastConvIdRef.current = id
     setSessionConversationId(id)
     setSessionKey(id)
     setSystemMessages([])
+    if (documentId) setActiveDocumentId(documentId)
   }, [])
 
   const handleNewConversation = useCallback(() => {
@@ -93,6 +94,7 @@ function ChatPage() {
       <ConversationSidebar
         conversations={conversations}
         activeId={conversationId}
+        isNewSession={!conversationId}
         onSelect={handleSelectConversation}
         onNew={handleNewConversation}
         loading={sidebarLoading}

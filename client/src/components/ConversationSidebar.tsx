@@ -4,36 +4,14 @@ import type { Conversation } from "../types"
 interface Props {
   conversations: Conversation[]
   activeId: string | null
-  onSelect: (id: string) => void
+  isNewSession: boolean
+  onSelect: (id: string, documentId: string | null) => void
   onNew: () => void
   loading: boolean
   userName?: string | null
 }
 
-function formatDate(isoString: string): string {
-  const date = new Date(isoString)
-  const now = new Date()
-  const diffDays = Math.floor((now.getTime() - date.getTime()) / 86_400_000)
-
-  if (diffDays === 0) return "Today"
-  if (diffDays === 1) return "Yesterday"
-  if (diffDays < 7) return `${diffDays} days ago`
-  return date.toLocaleDateString()
-}
-
-function groupByDate(conversations: Conversation[]): [string, Conversation[]][] {
-  const groups = new Map<string, Conversation[]>()
-  for (const conv of conversations) {
-    const label = formatDate(conv.created_at)
-    const existing = groups.get(label) ?? []
-    existing.push(conv)
-    groups.set(label, existing)
-  }
-  return Array.from(groups.entries())
-}
-
-export function ConversationSidebar({ conversations, activeId, onSelect, onNew, loading, userName }: Props) {
-  const groups = groupByDate(conversations)
+export function ConversationSidebar({ conversations, activeId, isNewSession, onSelect, onNew, loading, userName }: Props) {
   const navigate = useNavigate()
   const initials = userName ? userName.charAt(0).toUpperCase() : "?"
 
@@ -49,28 +27,29 @@ export function ConversationSidebar({ conversations, activeId, onSelect, onNew, 
       </div>
 
       <div className="sidebar__list">
+        {isNewSession && (
+          <button className="sidebar__item sidebar__item--active sidebar__item--new">
+            <span className="sidebar__item-title">New conversation</span>
+          </button>
+        )}
+
         {loading && conversations.length === 0 && (
           <p className="sidebar__empty">Loading...</p>
         )}
-        {!loading && conversations.length === 0 && (
+        {!loading && conversations.length === 0 && !isNewSession && (
           <p className="sidebar__empty">No conversations yet</p>
         )}
 
-        {groups.map(([label, items]) => (
-          <div key={label} className="sidebar__group">
-            <span className="sidebar__group-label">{label}</span>
-            {items.map((conv) => (
-              <button
-                key={conv.id}
-                className={`sidebar__item${conv.id === activeId ? " sidebar__item--active" : ""}`}
-                onClick={() => onSelect(conv.id)}
-              >
-                <span className="sidebar__item-title">
-                  {conv.title ?? "New conversation"}
-                </span>
-              </button>
-            ))}
-          </div>
+        {conversations.map((conv) => (
+          <button
+            key={conv.id}
+            className={`sidebar__item${conv.id === activeId ? " sidebar__item--active" : ""}`}
+            onClick={() => onSelect(conv.id, conv.document_id)}
+          >
+            <span className="sidebar__item-title">
+              {conv.title ?? "New conversation"}
+            </span>
+          </button>
         ))}
       </div>
 

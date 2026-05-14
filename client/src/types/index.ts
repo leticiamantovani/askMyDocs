@@ -8,6 +8,7 @@ export interface Message {
 export interface Conversation {
   id: string
   title: string | null
+  document_id: string | null
   created_at: string
 }
 
