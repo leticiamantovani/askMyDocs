@@ -341,7 +341,6 @@ body { margin: 0; background: var(--bg); }
   transition: border-color 0.15s, color 0.15s, background 0.15s;
   white-space: nowrap;
   max-width: 220px;
-  overflow: hidden;
 }
 .doc-selector__item:hover { border-color: var(--accent); color: var(--text-1); }
 .doc-selector__item--active {
@@ -363,6 +362,7 @@ body { margin: 0; background: var(--bg); }
   font-family: inherit;
   cursor: pointer;
   min-width: 0;
+  overflow: hidden;
 }
 
 .doc-selector__delete {

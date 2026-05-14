@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.documents import Document
@@ -28,5 +28,9 @@ class DocumentRepository:
         return result.scalar_one_or_none()
 
     async def delete(self, document: Document) -> None:
+        await self.db.execute(
+            text("DELETE FROM langchain_pg_collection WHERE name = :name"),
+            {"name": document.collection_name},
+        )
         await self.db.delete(document)
         await self.db.commit()

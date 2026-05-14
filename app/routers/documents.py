@@ -1,11 +1,10 @@
-import asyncio
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
+from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.config import get_vector_store
-from app.core.dependencies import create_embeddings, get_current_user_id, get_db
+from app.core.dependencies import get_current_user_id, get_db
 from app.core.exceptions import NotFoundError
 from app.repository.document_repository import DocumentRepository
 from app.schema.documents import DocumentResponse
@@ -32,9 +31,5 @@ async def delete_document(
     doc = await repo.get_by_id(document_id, UUID(user_id))
     if not doc:
         raise NotFoundError("Document not found")
-
-    embeddings = create_embeddings()
-    vector_store = get_vector_store(embeddings, doc.collection_name)
-    await asyncio.to_thread(vector_store.delete_collection)
 
     await repo.delete(doc)
