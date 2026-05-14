@@ -166,22 +166,72 @@ body { margin: 0; background: var(--bg); }
   opacity: 0.7;
 }
 
+.sidebar__footer {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid var(--border);
+}
+
 .sidebar__profile {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   padding: 0.875rem;
-  border-top: 1px solid var(--border);
   background: transparent;
-  border-left: none;
-  border-right: none;
-  border-bottom: none;
+  border: none;
   cursor: pointer;
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   transition: background 0.12s;
   text-align: left;
 }
 .sidebar__profile:hover { background: var(--surface-2); }
+
+.sidebar__bug {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-right: 0.625rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--text-3);
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+}
+.sidebar__bug:hover {
+  color: var(--error);
+  background: rgba(248,113,113,0.08);
+  border-color: rgba(248,113,113,0.2);
+}
+.sidebar__bug-tooltip {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 6px;
+  background: var(--surface-3);
+  border: 1px solid var(--border-md);
+  color: var(--text-2);
+  font-size: 0.72rem;
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 0.25rem 0.55rem;
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.15s, transform 0.15s;
+  box-shadow: var(--shadow-sm);
+  z-index: 10;
+}
+.sidebar__footer { position: relative; overflow: visible; }
+.sidebar__bug:hover .sidebar__bug-tooltip {
+  opacity: 1;
+  transform: translateY(0);
+}
 
 .sidebar__avatar {
   width: 32px;
@@ -897,6 +947,7 @@ body { margin: 0; background: var(--bg); }
   bottom: 1.5rem;
   right: 1.5rem;
   z-index: 50;
+  isolation: isolate;
   width: 40px;
   height: 40px;
   border-radius: var(--radius-full);
@@ -916,6 +967,28 @@ body { margin: 0; background: var(--bg); }
   background: rgba(248,113,113,0.08);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.bug-fab__tooltip {
+  position: absolute;
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%) translateX(4px);
+  background: var(--surface-3);
+  border: 1px solid var(--border-md);
+  color: var(--text-2);
+  font-size: 0.72rem;
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 0.25rem 0.55rem;
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s, transform 0.15s;
+  box-shadow: var(--shadow-sm);
+}
+.bug-fab:hover .bug-fab__tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
 }
 
 /* ── Bug modal ──────────────────────────────────────────────────────────── */

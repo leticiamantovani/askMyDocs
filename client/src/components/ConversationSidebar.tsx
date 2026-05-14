@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import type { Conversation } from "../types"
+import { BugReportButton } from "./BugReportButton"
 import { ConfirmModal } from "./ConfirmModal"
 
 interface Props {
@@ -75,10 +76,27 @@ export function ConversationSidebar({ conversations, activeId, isNewSession, onS
           ))}
         </div>
 
-        <button className="sidebar__profile" onClick={() => navigate("/profile")}>
-          <span className="sidebar__avatar">{initials}</span>
-          <span className="sidebar__profile-name">{userName ?? "Account"}</span>
-        </button>
+        <div className="sidebar__footer">
+          <button className="sidebar__profile" onClick={() => navigate("/profile")}>
+            <span className="sidebar__avatar">{initials}</span>
+            <span className="sidebar__profile-name">{userName ?? "Account"}</span>
+          </button>
+          <BugReportButton trigger={(open) => (
+            <button className="sidebar__bug" onClick={open} aria-label="Report a bug">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M8 2l1.5 1.5"/>
+                <path d="M14.5 3.5L16 2"/>
+                <path d="M9 7H5l-2 3h2"/>
+                <path d="M15 7h4l2 3h-2"/>
+                <path d="M9 7a3 3 0 0 0-3 3v5a6 6 0 0 0 12 0v-5a3 3 0 0 0-3-3H9z"/>
+                <path d="M6 13H3"/>
+                <path d="M21 13h-3"/>
+                <path d="M12 20v2"/>
+              </svg>
+              <span className="sidebar__bug-tooltip">Report a bug</span>
+            </button>
+          )} />
+        </div>
       </aside>
 
       {pendingDeleteId && (

@@ -155,11 +155,10 @@ function ChatPage() {
 export default function App() {
   return (
     <BrowserRouter>
-      <BugReportButton />
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/login" element={<><LoginPage /><BugReportButton /></>} />
+        <Route path="/forgot-password" element={<><ForgotPasswordPage /><BugReportButton /></>} />
+        <Route path="/reset-password" element={<><ResetPasswordPage /><BugReportButton /></>} />
         <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         <Route
           path="/"

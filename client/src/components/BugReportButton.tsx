@@ -3,7 +3,11 @@ import { reportBug } from "../services/api"
 
 type Step = "idle" | "open" | "sending" | "done"
 
-export function BugReportButton() {
+interface Props {
+  trigger?: (open: () => void) => React.ReactNode
+}
+
+export function BugReportButton({ trigger }: Props) {
   const [step, setStep] = useState<Step>("idle")
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
@@ -35,14 +39,21 @@ export function BugReportButton() {
     }
   }
 
+  const defaultTrigger = (
+    <button className="bug-fab" onClick={open} aria-label="Report a bug">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8 2l1.5 1.5"/><path d="M14.5 3.5L16 2"/>
+        <path d="M9 7H5l-2 3h2"/><path d="M15 7h4l2 3h-2"/>
+        <path d="M9 7a3 3 0 0 0-3 3v5a6 6 0 0 0 12 0v-5a3 3 0 0 0-3-3H9z"/>
+        <path d="M6 13H3"/><path d="M21 13h-3"/><path d="M12 20v2"/>
+      </svg>
+      <span className="bug-fab__tooltip">Report a bug</span>
+    </button>
+  )
+
   return (
     <>
-      <button className="bug-fab" onClick={open} title="Report a bug" aria-label="Report a bug">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
-          <path d="M12 8v4M12 16h.01"/>
-        </svg>
-      </button>
+      {trigger ? trigger(open) : defaultTrigger}
 
       {step !== "idle" && (
         <div className="modal-backdrop" onClick={close}>
