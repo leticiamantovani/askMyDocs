@@ -9,6 +9,7 @@ import { useChat } from "./hooks/useChat"
 import "./index.css"
 import { ForgotPasswordPage } from "./pages/ForgotPasswordPage"
 import { LoginPage } from "./pages/LoginPage"
+import { ProfilePage } from "./pages/ProfilePage"
 import { ResetPasswordPage } from "./pages/ResetPasswordPage"
 import { getMe, isAuthenticated, listConversations, listDocuments, logout } from "./services/api"
 import type { Conversation, Document, Message } from "./types"
@@ -95,15 +96,13 @@ function ChatPage() {
         onSelect={handleSelectConversation}
         onNew={handleNewConversation}
         loading={sidebarLoading}
+        userName={userName}
       />
 
       <div className="main">
         <header className="main__header">
           <PdfDropzone onUploadSuccess={handleUploadSuccess} />
-          <div className="header__user">
-            {userName && <span className="header__name">Hi, {userName}</span>}
-            <button className="app__logout" onClick={logout}>Logout</button>
-          </div>
+          <button className="app__logout" onClick={logout}>Logout</button>
         </header>
 
         <DocumentSelector
@@ -134,6 +133,7 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         <Route
           path="/"
           element={

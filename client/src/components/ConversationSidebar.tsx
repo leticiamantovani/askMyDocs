@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom"
 import type { Conversation } from "../types"
 
 interface Props {
@@ -6,6 +7,7 @@ interface Props {
   onSelect: (id: string) => void
   onNew: () => void
   loading: boolean
+  userName?: string | null
 }
 
 function formatDate(isoString: string): string {
@@ -30,8 +32,10 @@ function groupByDate(conversations: Conversation[]): [string, Conversation[]][] 
   return Array.from(groups.entries())
 }
 
-export function ConversationSidebar({ conversations, activeId, onSelect, onNew, loading }: Props) {
+export function ConversationSidebar({ conversations, activeId, onSelect, onNew, loading, userName }: Props) {
   const groups = groupByDate(conversations)
+  const navigate = useNavigate()
+  const initials = userName ? userName.charAt(0).toUpperCase() : "?"
 
   return (
     <aside className="sidebar">
@@ -69,6 +73,11 @@ export function ConversationSidebar({ conversations, activeId, onSelect, onNew, 
           </div>
         ))}
       </div>
+
+      <button className="sidebar__profile" onClick={() => navigate("/profile")}>
+        <span className="sidebar__avatar">{initials}</span>
+        <span className="sidebar__profile-name">{userName ?? "Account"}</span>
+      </button>
     </aside>
   )
 }

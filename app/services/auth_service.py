@@ -47,6 +47,38 @@ async def register_user(email: str, password: str, name: str, db: AsyncSession) 
     return user
 
 
+async def update_user(user_id: str, name: str, email: str, db: AsyncSession) -> User:
+    from uuid import UUID
+    result = await db.execute(select(User).where(User.id == UUID(user_id)))
+    user = result.scalar_one_or_none()
+    if not user:
+        raise DomainError("User not found", 404)
+
+    if email != user.email:
+        existing = await db.execute(select(User).where(User.email == email))
+        if existing.scalar_one_or_none():
+            raise DomainError("Email already in use", 409)
+
+    user.name = name
+    user.email = email
+    await db.commit()
+    await db.refresh(user)
+    return user
+
+
+async def update_user_password(user_id: str, current_password: str, new_password: str, db: AsyncSession) -> None:
+    from uuid import UUID
+    result = await db.execute(select(User).where(User.id == UUID(user_id)))
+    user = result.scalar_one_or_none()
+    if not user:
+        raise DomainError("User not found", 404)
+    if not verify_password(current_password, user.hashed_password):
+        raise DomainError("Current password is incorrect", 400)
+
+    user.hashed_password = hash_password(new_password)
+    await db.commit()
+
+
 async def get_user_by_id(user_id: str, db: AsyncSession) -> User:
     from uuid import UUID
     result = await db.execute(select(User).where(User.id == UUID(user_id)))

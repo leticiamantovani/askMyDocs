@@ -37,12 +37,45 @@ export async function register(email: string, password: string, name: string): P
   }
 }
 
-export async function getMe(): Promise<{ id: string; email: string; name: string | null }> {
+export interface UserProfile {
+  id: string
+  email: string
+  name: string | null
+}
+
+export async function getMe(): Promise<UserProfile> {
   const response = await fetch(`${BASE_URL}/auth/me`, {
     headers: { ...authHeaders() },
   })
   await assertOk(response)
   return response.json()
+}
+
+export async function updateProfile(name: string, email: string): Promise<UserProfile> {
+  const response = await fetch(`${BASE_URL}/auth/me`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify({ name, email }),
+  })
+  if (!response.ok) {
+    handleUnauthorized(response)
+    const data = await response.json().catch(() => ({}))
+    throw new Error(data.detail ?? `HTTP ${response.status}`)
+  }
+  return response.json()
+}
+
+export async function updatePassword(current_password: string, new_password: string): Promise<void> {
+  const response = await fetch(`${BASE_URL}/auth/me/password`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify({ current_password, new_password }),
+  })
+  if (!response.ok) {
+    handleUnauthorized(response)
+    const data = await response.json().catch(() => ({}))
+    throw new Error(data.detail ?? `HTTP ${response.status}`)
+  }
 }
 
 export async function login(email: string, password: string): Promise<void> {

@@ -5,8 +5,8 @@ from app.core.config import settings
 from app.core.dependencies import get_db
 from app.core.exceptions import DomainError
 from app.core.dependencies import get_current_user_id
-from app.schema.auth import ForgotPasswordRequest, LoginRequest, RegisterRequest, ResetPasswordRequest, TokenResponse, UserResponse
-from app.services.auth_service import get_user_by_id, login_user, register_user, request_password_reset, reset_password
+from app.schema.auth import ForgotPasswordRequest, LoginRequest, RegisterRequest, ResetPasswordRequest, TokenResponse, UpdatePasswordRequest, UpdateProfileRequest, UserResponse
+from app.services.auth_service import get_user_by_id, login_user, register_user, request_password_reset, reset_password, update_user, update_user_password
 from app.services.email_service import send_password_reset_email
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -22,6 +22,18 @@ async def register(body: RegisterRequest, db: AsyncSession = Depends(get_db)):
 async def me(user_id: str = Depends(get_current_user_id), db: AsyncSession = Depends(get_db)):
     user = await get_user_by_id(user_id, db)
     return UserResponse(id=str(user.id), email=user.email, name=user.name)
+
+
+@router.patch("/me", response_model=UserResponse)
+async def update_profile(body: UpdateProfileRequest, user_id: str = Depends(get_current_user_id), db: AsyncSession = Depends(get_db)):
+    user = await update_user(user_id, body.name, body.email, db)
+    return UserResponse(id=str(user.id), email=user.email, name=user.name)
+
+
+@router.patch("/me/password", status_code=200)
+async def change_password(body: UpdatePasswordRequest, user_id: str = Depends(get_current_user_id), db: AsyncSession = Depends(get_db)):
+    await update_user_password(user_id, body.current_password, body.new_password, db)
+    return {"message": "Password updated successfully."}
 
 
 @router.post("/login", response_model=TokenResponse)
