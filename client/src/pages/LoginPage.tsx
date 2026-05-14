@@ -47,6 +47,11 @@ export function LoginPage() {
   return (
     <div className="auth">
       <div className="auth__card">
+        <div className="auth__logo">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+        </div>
         <h1 className="auth__title">RAG Chatbot</h1>
 
         {successMessage && <p className="auth__success-msg">{successMessage}</p>}

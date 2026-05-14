@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react"
+import { useState } from "react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import { resetPassword } from "../services/api"
 
@@ -12,7 +12,7 @@ export function ResetPasswordPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (password !== confirm) {
       setError("Passwords do not match.")
@@ -44,8 +44,13 @@ export function ResetPasswordPage() {
   return (
     <div className="auth">
       <div className="auth__card">
+        <div className="auth__logo">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+        </div>
         <h1 className="auth__title">RAG Chatbot</h1>
-        <h2 className="auth__subtitle">New password</h2>
+        <p className="auth__subtitle">New password</p>
 
         <form className="auth__form" onSubmit={handleSubmit}>
           <label className="auth__label">

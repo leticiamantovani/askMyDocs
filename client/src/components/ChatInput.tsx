@@ -1,4 +1,4 @@
-import { type KeyboardEvent, useState } from "react"
+import { type KeyboardEvent, useRef, useState } from "react"
 
 interface Props {
   onSend: (message: string) => void
@@ -7,6 +7,7 @@ interface Props {
 
 export function ChatInput({ onSend, disabled }: Props) {
   const [value, setValue] = useState("")
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -20,20 +21,38 @@ export function ChatInput({ onSend, disabled }: Props) {
     if (!trimmed || disabled) return
     onSend(trimmed)
     setValue("")
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto"
+    }
+  }
+
+  function handleInput(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    setValue(e.target.value)
+    const el = e.target
+    el.style.height = "auto"
+    el.style.height = `${el.scrollHeight}px`
   }
 
   return (
     <div className="chat-input">
       <textarea
+        ref={textareaRef}
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={handleInput}
         onKeyDown={handleKeyDown}
         placeholder="Ask something… (Enter to send, Shift+Enter for newline)"
-        rows={3}
+        rows={1}
         disabled={disabled}
       />
-      <button onClick={submit} disabled={disabled || !value.trim()}>
-        Send
+      <button
+        className="chat-input__send"
+        onClick={submit}
+        disabled={disabled || !value.trim()}
+        title="Send"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 19V5M5 12l7-7 7 7" />
+        </svg>
       </button>
     </div>
   )

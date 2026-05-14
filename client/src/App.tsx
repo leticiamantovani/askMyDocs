@@ -112,10 +112,19 @@ function ChatPage() {
         />
 
         <main className="app__chat">
-          {historyLoading && <div className="chat__empty"><p>Loading messages...</p></div>}
+          {historyLoading && (
+            <div className="chat__empty">
+              <p>Loading messages…</p>
+            </div>
+          )}
           {isEmpty && (
             <div className="chat__empty">
-              <p>{activeDocumentId ? "Ask anything about this document" : "Select a document to start"}</p>
+              <div className="chat__empty-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+              </div>
+              <p>{activeDocumentId ? "Ask anything about this document" : "Upload a PDF to get started"}</p>
             </div>
           )}
           <MessageList messages={allMessages} />

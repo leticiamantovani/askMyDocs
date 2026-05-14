@@ -7,6 +7,16 @@ interface Props {
   onUploadSuccess: (doc: Document) => void
 }
 
+function UploadIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="17 8 12 3 7 8" />
+      <line x1="12" y1="3" x2="12" y2="15" />
+    </svg>
+  )
+}
+
 export function PdfDropzone({ onUploadSuccess }: Props) {
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -15,10 +25,8 @@ export function PdfDropzone({ onUploadSuccess }: Props) {
     async (acceptedFiles: File[]) => {
       const file = acceptedFiles[0]
       if (!file) return
-
       setUploading(true)
       setError(null)
-
       try {
         const doc = await uploadPdf(file)
         onUploadSuccess(doc)
@@ -39,16 +47,14 @@ export function PdfDropzone({ onUploadSuccess }: Props) {
   })
 
   return (
-    <div {...getRootProps()} className={`dropzone ${isDragActive ? "dropzone--active" : ""} ${uploading ? "dropzone--uploading" : ""}`}>
+    <div
+      {...getRootProps()}
+      className={`dropzone ${isDragActive ? "dropzone--active" : ""} ${uploading ? "dropzone--uploading" : ""}`}
+    >
       <input {...getInputProps()} />
-      {uploading ? (
-        <p>Uploading…</p>
-      ) : isDragActive ? (
-        <p>Drop the PDF here</p>
-      ) : (
-        <p>Drag & drop a PDF here, or click to select</p>
-      )}
-      {error && <p className="dropzone__error">{error}</p>}
+      <UploadIcon />
+      {uploading ? "Uploading…" : isDragActive ? "Drop PDF here" : "Upload PDF"}
+      {error && <span className="dropzone__error">{error}</span>}
     </div>
   )
 }

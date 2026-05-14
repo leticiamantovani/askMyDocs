@@ -17,10 +17,10 @@ export function MessageList({ messages }: Props) {
     <div className="message-list">
       {messages.map((msg) => (
         <div key={msg.id} className={`message message--${msg.role}`}>
-          <span className="message__content">
+          <div className="message__bubble">
             <ReactMarkdown>{msg.content}</ReactMarkdown>
             {msg.streaming && <span className="message__cursor" />}
-          </span>
+          </div>
         </div>
       ))}
       <div ref={bottomRef} />
