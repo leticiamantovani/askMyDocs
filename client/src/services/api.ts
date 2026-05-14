@@ -1,4 +1,4 @@
-import type { Conversation } from "../types"
+import type { Conversation, Document } from "../types"
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000"
 
@@ -9,6 +9,20 @@ function getToken(): string | null {
 function authHeaders(): HeadersInit {
   const token = getToken()
   return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
+function handleUnauthorized(response: Response): void {
+  if (response.status === 401) {
+    localStorage.removeItem("token")
+    window.location.href = "/login"
+  }
+}
+
+async function assertOk(response: Response, message?: string): Promise<void> {
+  if (!response.ok) {
+    handleUnauthorized(response)
+    throw new Error(message ?? `HTTP ${response.status}`)
+  }
 }
 
 export async function register(email: string, password: string): Promise<void> {
@@ -52,11 +66,35 @@ export interface ApiMessage {
   created_at: string
 }
 
+export async function forgotPassword(email: string): Promise<void> {
+  const response = await fetch(`${BASE_URL}/auth/forgot-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  })
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}))
+    throw new Error(data.detail ?? `HTTP ${response.status}`)
+  }
+}
+
+export async function resetPassword(token: string, new_password: string): Promise<void> {
+  const response = await fetch(`${BASE_URL}/auth/reset-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token, new_password }),
+  })
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}))
+    throw new Error(data.detail ?? `HTTP ${response.status}`)
+  }
+}
+
 export async function getConversationMessages(conversationId: string): Promise<ApiMessage[]> {
   const response = await fetch(`${BASE_URL}/conversations/${conversationId}/messages`, {
     headers: { ...authHeaders() },
   })
-  if (!response.ok) throw new Error(`HTTP ${response.status}`)
+  await assertOk(response)
   return response.json()
 }
 
@@ -64,7 +102,7 @@ export async function listConversations(): Promise<Conversation[]> {
   const response = await fetch(`${BASE_URL}/conversations`, {
     headers: { ...authHeaders() },
   })
-  if (!response.ok) throw new Error(`HTTP ${response.status}`)
+  await assertOk(response)
   return response.json()
 }
 
@@ -73,13 +111,22 @@ export async function createConversation(): Promise<Conversation> {
     method: "POST",
     headers: { ...authHeaders() },
   })
-  if (!response.ok) throw new Error(`HTTP ${response.status}`)
+  await assertOk(response)
+  return response.json()
+}
+
+export async function listDocuments(): Promise<Document[]> {
+  const response = await fetch(`${BASE_URL}/documents`, {
+    headers: { ...authHeaders() },
+  })
+  await assertOk(response)
   return response.json()
 }
 
 export async function streamChat(
   question: string,
   conversationId: string | null,
+  documentId: string | null,
   onChunk: (chunk: string) => void,
   onDone: (conversationId: string) => void,
   signal?: AbortSignal
@@ -90,11 +137,11 @@ export async function streamChat(
   const response = await fetch(url.toString(), {
     method: "POST",
     headers: { "Content-Type": "application/json", ...authHeaders() },
-    body: JSON.stringify({ question }),
+    body: JSON.stringify({ question, document_id: documentId }),
     signal,
   })
 
-  if (!response.ok) throw new Error(`HTTP ${response.status}`)
+  await assertOk(response)
 
   const newConversationId = response.headers.get("X-Conversation-ID") ?? conversationId ?? ""
 
@@ -110,7 +157,7 @@ export async function streamChat(
   onDone(newConversationId)
 }
 
-export async function uploadPdf(file: File): Promise<void> {
+export async function uploadPdf(file: File): Promise<Document> {
   const form = new FormData()
   form.append("file", file)
 
@@ -119,5 +166,6 @@ export async function uploadPdf(file: File): Promise<void> {
     headers: authHeaders(),
     body: form,
   })
-  if (!response.ok) throw new Error(`Upload failed: HTTP ${response.status}`)
+  await assertOk(response, `Upload failed: HTTP ${response.status}`)
+  return response.json()
 }

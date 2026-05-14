@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react"
+import ReactMarkdown from "react-markdown"
 import type { Message } from "../types"
 
 interface Props {
@@ -17,7 +18,7 @@ export function MessageList({ messages }: Props) {
       {messages.map((msg) => (
         <div key={msg.id} className={`message message--${msg.role}`}>
           <span className="message__content">
-            {msg.content}
+            <ReactMarkdown>{msg.content}</ReactMarkdown>
             {msg.streaming && <span className="message__cursor" />}
           </span>
         </div>

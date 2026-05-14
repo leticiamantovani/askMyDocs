@@ -1,17 +1,24 @@
 import { FormEvent, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import { login, register } from "../services/api"
 
 export function LoginPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const successMessage = (location.state as { message?: string } | null)?.message
   const [mode, setMode] = useState<"login" | "register">("login")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [confirm, setConfirm] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
+    if (mode === "register" && password !== confirm) {
+      setError("Passwords do not match.")
+      return
+    }
     setError(null)
     setLoading(true)
     try {
@@ -33,6 +40,8 @@ export function LoginPage() {
     <div className="auth">
       <div className="auth__card">
         <h1 className="auth__title">RAG Chatbot</h1>
+
+        {successMessage && <p className="auth__success-msg">{successMessage}</p>}
 
         <div className="auth__tabs">
           <button
@@ -75,11 +84,28 @@ export function LoginPage() {
             />
           </label>
 
+          {mode === "register" && (
+            <label className="auth__label">
+              Confirm password
+              <input
+                className="auth__input"
+                type="password"
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
+                required
+              />
+            </label>
+          )}
+
           {error && <p className="auth__error">{error}</p>}
 
           <button className="auth__submit" type="submit" disabled={loading}>
             {loading ? "Loading..." : mode === "login" ? "Login" : "Create account"}
           </button>
+
+          {mode === "login" && (
+            <Link className="auth__link" to="/forgot-password">Forgot your password?</Link>
+          )}
         </form>
       </div>
     </div>

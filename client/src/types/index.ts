@@ -10,3 +10,9 @@ export interface Conversation {
   title: string | null
   created_at: string
 }
+
+export interface Document {
+  id: string
+  filename: string
+  created_at: string
+}

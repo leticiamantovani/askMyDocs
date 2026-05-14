@@ -7,15 +7,12 @@ function randomId() {
 }
 
 interface UseChatOptions {
-  // Stable key that identifies which "slot" we're in.
-  // When the user picks an existing conversation or clicks "New", this changes.
-  // It does NOT change when the backend assigns an ID to a brand-new conversation.
   sessionKey: string
-  // The conversation ID to pre-load (null = brand-new conversation).
   conversationId: string | null
+  documentId: string | null
 }
 
-export function useChat({ sessionKey, conversationId }: UseChatOptions) {
+export function useChat({ sessionKey, conversationId, documentId }: UseChatOptions) {
   const [messages, setMessages] = useState<Message[]>([])
   const [activeConversationId, setActiveConversationId] = useState<string | null>(conversationId)
   const [loading, setLoading] = useState(false)
@@ -67,6 +64,7 @@ export function useChat({ sessionKey, conversationId }: UseChatOptions) {
         await streamChat(
           question,
           activeConversationId,
+          documentId,
           (chunk) => {
             setMessages((prev) =>
               prev.map((m) => (m.id === assistantId ? { ...m, content: m.content + chunk } : m))
@@ -85,7 +83,7 @@ export function useChat({ sessionKey, conversationId }: UseChatOptions) {
         setLoading(false)
       }
     },
-    [activeConversationId]
+    [activeConversationId, documentId]
   )
 
   return { messages, conversationId: activeConversationId, loading, historyLoading, sendMessage }

@@ -30,8 +30,10 @@ async def _retrieve_docs(state: RAGState) -> dict:
     question_embedding = await asyncio.to_thread(embeddings.embed_query, state["question"])
     vector_store = get_vector_store(embeddings, state["collection_name"])
     results = await asyncio.to_thread(
-        vector_store.similarity_search_by_vector, question_embedding, k=2
+        vector_store.similarity_search_by_vector, question_embedding, k=10
     )
+
+    print("RESSULTS", results)
     return {"context": "\n\n".join(doc.page_content for doc in results)}
 
 

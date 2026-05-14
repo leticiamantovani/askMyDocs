@@ -1,9 +1,10 @@
 import { useCallback, useState } from "react"
 import { useDropzone } from "react-dropzone"
 import { uploadPdf } from "../services/api"
+import type { Document } from "../types"
 
 interface Props {
-  onUploadSuccess: (message: string) => void
+  onUploadSuccess: (doc: Document) => void
 }
 
 export function PdfDropzone({ onUploadSuccess }: Props) {
@@ -19,8 +20,8 @@ export function PdfDropzone({ onUploadSuccess }: Props) {
       setError(null)
 
       try {
-        await uploadPdf(file)
-        onUploadSuccess(`"${file.name}" uploaded and indexed successfully.`)
+        const doc = await uploadPdf(file)
+        onUploadSuccess(doc)
       } catch (err) {
         setError(err instanceof Error ? err.message : "Upload failed")
       } finally {

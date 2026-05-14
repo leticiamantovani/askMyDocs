@@ -1,3 +1,4 @@
+import secrets
 from datetime import datetime, timedelta, timezone
 
 import bcrypt
@@ -53,3 +54,33 @@ async def login_user(email: str, password: str, db: AsyncSession) -> str:
         raise DomainError("Invalid credentials", 401)
 
     return create_access_token(str(user.id))
+
+
+async def request_password_reset(email: str, db: AsyncSession) -> str | None:
+    """Returns the reset token if user exists, None otherwise (caller decides whether to send email)."""
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalar_one_or_none()
+    if not user:
+        return None
+
+    token = secrets.token_urlsafe(32)
+    user.reset_token = token
+    user.reset_token_expires = datetime.utcnow() + timedelta(minutes=settings.reset_token_expire_minutes)
+    await db.commit()
+    return token
+
+
+async def reset_password(token: str, new_password: str, db: AsyncSession) -> None:
+    result = await db.execute(select(User).where(User.reset_token == token))
+    user = result.scalar_one_or_none()
+
+    if not user or not user.reset_token_expires:
+        raise DomainError("Invalid or expired reset token", 400)
+
+    if datetime.utcnow() > user.reset_token_expires:
+        raise DomainError("Invalid or expired reset token", 400)
+
+    user.hashed_password = hash_password(new_password)
+    user.reset_token = None
+    user.reset_token_expires = None
+    await db.commit()
