@@ -135,6 +135,7 @@ export function LoginPage() {
           )}
         </form>
       </div>
+      <p className="auth__made-with">made with <span>♥</span> by Leticia</p>
     </div>
   )
 }
