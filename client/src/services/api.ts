@@ -94,6 +94,7 @@ export async function login(email: string, password: string): Promise<void> {
 
 export function logout(): void {
   localStorage.removeItem("token")
+  window.location.href = "/login"
 }
 
 export function isAuthenticated(): boolean {
