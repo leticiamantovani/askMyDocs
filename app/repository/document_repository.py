@@ -26,3 +26,7 @@ class DocumentRepository:
             select(Document).where(Document.id == document_id, Document.user_id == user_id)
         )
         return result.scalar_one_or_none()
+
+    async def delete(self, document: Document) -> None:
+        await self.db.delete(document)
+        await self.db.commit()

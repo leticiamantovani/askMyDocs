@@ -164,6 +164,14 @@ export async function listDocuments(): Promise<Document[]> {
   return response.json()
 }
 
+export async function deleteDocument(documentId: string): Promise<void> {
+  const response = await fetch(`${BASE_URL}/documents/${documentId}`, {
+    method: "DELETE",
+    headers: { ...authHeaders() },
+  })
+  await assertOk(response)
+}
+
 export async function streamChat(
   question: string,
   conversationId: string | null,

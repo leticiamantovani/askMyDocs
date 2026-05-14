@@ -4,6 +4,7 @@ interface Props {
   documents: Document[]
   activeId: string | null
   onSelect: (id: string) => void
+  onDelete: (id: string) => void
 }
 
 function FileIcon() {
@@ -15,7 +16,7 @@ function FileIcon() {
   )
 }
 
-export function DocumentSelector({ documents, activeId, onSelect }: Props) {
+export function DocumentSelector({ documents, activeId, onSelect, onDelete }: Props) {
   if (documents.length === 0) return null
 
   return (
@@ -23,15 +24,28 @@ export function DocumentSelector({ documents, activeId, onSelect }: Props) {
       <span className="doc-selector__label">Documents</span>
       <div className="doc-selector__list">
         {documents.map((doc) => (
-          <button
+          <div
             key={doc.id}
             className={`doc-selector__item ${activeId === doc.id ? "doc-selector__item--active" : ""}`}
-            onClick={() => onSelect(doc.id)}
-            title={doc.filename}
           >
-            <span className="doc-selector__icon"><FileIcon /></span>
-            <span className="doc-selector__name">{doc.filename}</span>
-          </button>
+            <button
+              className="doc-selector__select"
+              onClick={() => onSelect(doc.id)}
+              title={doc.filename}
+            >
+              <span className="doc-selector__icon"><FileIcon /></span>
+              <span className="doc-selector__name">{doc.filename}</span>
+            </button>
+            <button
+              className="doc-selector__delete"
+              onClick={(e) => { e.stopPropagation(); onDelete(doc.id) }}
+              title="Delete document"
+            >
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         ))}
       </div>
     </div>

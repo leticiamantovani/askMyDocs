@@ -271,19 +271,16 @@ body { margin: 0; background: var(--bg); }
 .doc-selector__item {
   display: flex;
   align-items: center;
-  gap: 0.375rem;
-  padding: 0.25rem 0.75rem;
   background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: var(--radius-full);
   color: var(--text-2);
   font-size: 0.78rem;
   font-weight: 500;
-  font-family: inherit;
-  cursor: pointer;
   transition: border-color 0.15s, color 0.15s, background 0.15s;
   white-space: nowrap;
-  max-width: 200px;
+  max-width: 220px;
+  overflow: hidden;
 }
 .doc-selector__item:hover { border-color: var(--accent); color: var(--text-1); }
 .doc-selector__item--active {
@@ -291,6 +288,37 @@ body { margin: 0; background: var(--bg); }
   border-color: var(--accent);
   color: var(--accent-text);
 }
+
+.doc-selector__select {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.5rem 0.25rem 0.75rem;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.doc-selector__delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.5rem 0 0.125rem;
+  background: transparent;
+  border: none;
+  color: var(--text-3);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+.doc-selector__item:hover .doc-selector__delete { opacity: 1; }
+.doc-selector__delete:hover { color: var(--error); }
 
 .doc-selector__icon { display: flex; align-items: center; color: var(--text-3); flex-shrink: 0; }
 .doc-selector__item--active .doc-selector__icon { color: var(--accent-text); }
