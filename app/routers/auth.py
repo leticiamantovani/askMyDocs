@@ -4,8 +4,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import settings
 from app.core.dependencies import get_db
 from app.core.exceptions import DomainError
-from app.schema.auth import ForgotPasswordRequest, LoginRequest, RegisterRequest, ResetPasswordRequest, TokenResponse
-from app.services.auth_service import login_user, register_user, request_password_reset, reset_password
+from app.core.dependencies import get_current_user_id
+from app.schema.auth import ForgotPasswordRequest, LoginRequest, RegisterRequest, ResetPasswordRequest, TokenResponse, UserResponse
+from app.services.auth_service import get_user_by_id, login_user, register_user, request_password_reset, reset_password
 from app.services.email_service import send_password_reset_email
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -13,8 +14,14 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.post("/register", status_code=201)
 async def register(body: RegisterRequest, db: AsyncSession = Depends(get_db)):
-    user = await register_user(body.email, body.password, db)
-    return {"id": str(user.id), "email": user.email}
+    user = await register_user(body.email, body.password, body.name, db)
+    return {"id": str(user.id), "email": user.email, "name": user.name}
+
+
+@router.get("/me", response_model=UserResponse)
+async def me(user_id: str = Depends(get_current_user_id), db: AsyncSession = Depends(get_db)):
+    user = await get_user_by_id(user_id, db)
+    return UserResponse(id=str(user.id), email=user.email, name=user.name)
 
 
 @router.post("/login", response_model=TokenResponse)

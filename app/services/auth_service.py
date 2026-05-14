@@ -35,15 +35,24 @@ def decode_token(token: str) -> str:
         raise DomainError("Invalid token", 401)
 
 
-async def register_user(email: str, password: str, db: AsyncSession) -> User:
+async def register_user(email: str, password: str, name: str, db: AsyncSession) -> User:
     result = await db.execute(select(User).where(User.email == email))
     if result.scalar_one_or_none():
         raise DomainError("Email already registered", 409)
 
-    user = User(email=email, hashed_password=hash_password(password))
+    user = User(email=email, name=name, hashed_password=hash_password(password))
     db.add(user)
     await db.commit()
     await db.refresh(user)
+    return user
+
+
+async def get_user_by_id(user_id: str, db: AsyncSession) -> User:
+    from uuid import UUID
+    result = await db.execute(select(User).where(User.id == UUID(user_id)))
+    user = result.scalar_one_or_none()
+    if not user:
+        raise DomainError("User not found", 404)
     return user
 
 

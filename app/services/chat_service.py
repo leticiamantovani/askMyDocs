@@ -24,6 +24,7 @@ class RAGState(TypedDict):
     context: str
     answer: str
     user_id: str | None
+    user_name: str | None
 
 
 async def _retrieve_docs(state: RAGState) -> dict:
@@ -50,6 +51,7 @@ async def _generate_answer(state: RAGState) -> dict:
         context=state["context"],
         history=history_block,
         question=state["question"],
+        user_name=state.get("user_name") or "",
     )
 
     response = await model.ainvoke(prompt)
@@ -81,6 +83,7 @@ class ChatService:
         collection_name: str,
         auto_title: str | None = None,
         user_id: str | None = None,
+        user_name: str | None = None,
     ) -> AsyncIterator[str]:
         history = await self.message_repo.list_by_conversation(conversation.id)
 
@@ -93,7 +96,7 @@ class ChatService:
         await self.db.commit()
 
         run_id = uuid4()
-        return self._stream(conversation, question, collection_name, history, run_id, user_id)
+        return self._stream(conversation, question, collection_name, history, run_id, user_id, user_name)
 
     async def _stream(
         self,
@@ -103,6 +106,7 @@ class ChatService:
         history: list[Message],
         run_id: UUID,
         user_id: str | None,
+        user_name: str | None = None,
     ) -> AsyncIterator[str]:
         initial_state: RAGState = {
             "question": question,
@@ -112,6 +116,7 @@ class ChatService:
             "context": "",
             "answer": "",
             "user_id": user_id,
+            "user_name": user_name,
         }
 
         config = {

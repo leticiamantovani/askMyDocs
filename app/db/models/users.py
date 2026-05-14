@@ -10,6 +10,7 @@ class User(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     email = Column(String, unique=True, nullable=False, index=True)
+    name = Column(String(100), nullable=True)
     hashed_password = Column(String, nullable=False)
     created_at = Column(DateTime, server_default=func.now())
     reset_token = Column(String, nullable=True)

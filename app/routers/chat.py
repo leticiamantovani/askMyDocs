@@ -8,6 +8,7 @@ from app.core.dependencies import get_chat_service, get_conversation_service, ge
 from app.core.exceptions import NotFoundError
 from app.repository.document_repository import DocumentRepository
 from app.schema.chat import ChatRequest
+from app.services.auth_service import get_user_by_id
 from app.services.chat_service import ChatService
 from app.services.conversation_service import ConversationService
 
@@ -36,8 +37,9 @@ async def get_answer(
     conversation = await conversation_service.resolve(uid, conversation_id)
     auto_title = request.question[:60].strip() if not conversation.title else None
 
+    user = await get_user_by_id(user_id, db)
     stream = await chat_service.stream_answer(
-        conversation, request.question, collection_name, auto_title, user_id
+        conversation, request.question, collection_name, auto_title, user_id, user.name
     )
     return StreamingResponse(
         stream,
