@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
+import { BugReportButton } from "./components/BugReportButton"
 import { ChatInput } from "./components/ChatInput"
 import { ConversationSidebar } from "./components/ConversationSidebar"
 import { DocumentSelector } from "./components/DocumentSelector"
@@ -154,6 +155,7 @@ function ChatPage() {
 export default function App() {
   return (
     <BrowserRouter>
+      <BugReportButton />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />

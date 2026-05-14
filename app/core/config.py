@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     mailtrap_api_key: str = os.getenv("MAILTRAP_API_KEY", "")
     reset_token_expire_minutes: int = int(os.getenv("RESET_TOKEN_EXPIRE_MINUTES", "30"))
     frontend_url: str = os.getenv("FRONTEND_URL", "http://localhost:5173")
+    bug_report_email: str = os.getenv("BUG_REPORT_EMAIL", "")
 
 
 settings = Settings()

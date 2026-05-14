@@ -173,6 +173,15 @@ export async function listDocuments(): Promise<Document[]> {
   return response.json()
 }
 
+export async function reportBug(title: string, description: string): Promise<void> {
+  const response = await fetch(`${BASE_URL}/feedback/bug`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify({ title, description }),
+  })
+  await assertOk(response)
+}
+
 export async function deleteDocument(documentId: string): Promise<void> {
   const response = await fetch(`${BASE_URL}/documents/${documentId}`, {
     method: "DELETE",

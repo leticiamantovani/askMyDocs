@@ -7,7 +7,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.routers import auth, chat, conversations, documents, upload
+from app.routers import auth, chat, conversations, documents, feedback, upload
 from app.core.exceptions import DomainError
 
 logger = logging.getLogger(__name__)
@@ -39,3 +39,4 @@ app.include_router(chat.router)
 app.include_router(upload.router)
 app.include_router(documents.router)
 app.include_router(conversations.router)
+app.include_router(feedback.router)
