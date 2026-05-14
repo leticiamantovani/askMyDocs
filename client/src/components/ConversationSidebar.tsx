@@ -76,7 +76,6 @@ export function ConversationSidebar({ conversations, activeId, isNewSession, onS
           ))}
         </div>
 
-        <p className="sidebar__made-with">made with <span>♥</span> by Leticia</p>
         <div className="sidebar__footer">
           <button className="sidebar__profile" onClick={() => navigate("/profile")}>
             <span className="sidebar__avatar">{initials}</span>
