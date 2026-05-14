@@ -46,14 +46,14 @@ export function LoginPage() {
         <div className="auth__tabs">
           <button
             className={`auth__tab ${mode === "login" ? "auth__tab--active" : ""}`}
-            onClick={() => setMode("login")}
+            onClick={() => { setMode("login"); setConfirm(""); setError(null) }}
             type="button"
           >
             Login
           </button>
           <button
             className={`auth__tab ${mode === "register" ? "auth__tab--active" : ""}`}
-            onClick={() => setMode("register")}
+            onClick={() => { setMode("register"); setError(null) }}
             type="button"
           >
             Register
