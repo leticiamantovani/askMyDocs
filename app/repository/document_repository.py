@@ -28,9 +28,12 @@ class DocumentRepository:
         return result.scalar_one_or_none()
 
     async def delete(self, document: Document) -> None:
+        await self.db.delete(document)
+        await self.db.commit()
+
+    async def delete_embeddings(self, collection_name: str) -> None:
         await self.db.execute(
             text("DELETE FROM langchain_pg_collection WHERE name = :name"),
-            {"name": document.collection_name},
+            {"name": collection_name},
         )
-        await self.db.delete(document)
         await self.db.commit()

@@ -1,7 +1,6 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
-from sqlalchemy import delete
+from fastapi import APIRouter, BackgroundTasks, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies import get_current_user_id, get_db
@@ -24,6 +23,7 @@ async def list_documents(
 @router.delete("/{document_id}", status_code=204)
 async def delete_document(
     document_id: UUID,
+    background_tasks: BackgroundTasks,
     user_id: str = Depends(get_current_user_id),
     db: AsyncSession = Depends(get_db),
 ):
@@ -32,4 +32,6 @@ async def delete_document(
     if not doc:
         raise NotFoundError("Document not found")
 
+    collection_name = doc.collection_name
     await repo.delete(doc)
+    background_tasks.add_task(repo.delete_embeddings, collection_name)
