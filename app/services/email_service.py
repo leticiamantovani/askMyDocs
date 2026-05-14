@@ -5,7 +5,7 @@ from app.core.config import settings
 
 def send_password_reset_email(to_email: str, reset_link: str) -> None:
     mail = mt.Mail(
-        sender=mt.Address(email="hello@demomailtrap.co", name="RAG Chatbot"),
+        sender=mt.Address(email="hello@demomailtrap.co", name="AskMyDocs"),
         to=[mt.Address(email=to_email)],
         subject="Reset your password",
         html=f"""

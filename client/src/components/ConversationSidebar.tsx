@@ -30,7 +30,7 @@ export function ConversationSidebar({ conversations, activeId, isNewSession, onS
     <>
       <aside className="sidebar">
         <div className="sidebar__header">
-          <span className="sidebar__brand">RAG Chatbot</span>
+          <span className="sidebar__brand">AskMyDocs</span>
           <button className="sidebar__new" onClick={onNew} title="New conversation">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 5v14M5 12h14" />
