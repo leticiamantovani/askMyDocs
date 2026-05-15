@@ -82,8 +82,15 @@ def get_chat_service(
 _bearer = HTTPBearer()
 
 
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(_bearer),
+):
+    from app.services.auth_service import TokenData, decode_token
+    return decode_token(credentials.credentials)
+
+
 async def get_current_user_id(
     credentials: HTTPAuthorizationCredentials = Depends(_bearer),
 ) -> str:
     from app.services.auth_service import decode_token
-    return decode_token(credentials.credentials)
+    return decode_token(credentials.credentials).id

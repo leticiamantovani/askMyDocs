@@ -25,11 +25,9 @@ async def report_bug(
     auth_header = request.headers.get("Authorization", "")
     if auth_header.startswith("Bearer "):
         try:
-            from app.services.auth_service import decode_token, get_user_by_id
-            user_id = decode_token(auth_header.removeprefix("Bearer ").strip())
-            user = await get_user_by_id(user_id, db)
-            reporter_email = user.email
-            reporter_name = user.name or user.email
+            from app.services.auth_service import decode_token
+            token_data = decode_token(auth_header.removeprefix("Bearer ").strip())
+            reporter_name = token_data.name or "Anonymous"
         except Exception:
             pass
 

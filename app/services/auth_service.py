@@ -1,4 +1,5 @@
 import secrets
+from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 
 import bcrypt
@@ -11,6 +12,12 @@ from app.core.exceptions import DomainError
 from app.db.models.users import User
 
 
+@dataclass
+class TokenData:
+    id: str
+    name: str
+
+
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
@@ -19,18 +26,19 @@ def verify_password(plain: str, hashed: str) -> bool:
     return bcrypt.checkpw(plain.encode(), hashed.encode())
 
 
-def create_access_token(user_id: str) -> str:
+def create_access_token(user_id: str, name: str) -> str:
     expire = datetime.now(timezone.utc) + timedelta(minutes=settings.jwt_expire_minutes)
-    return jwt.encode({"sub": user_id, "exp": expire}, settings.jwt_secret, algorithm=settings.jwt_algorithm)
+    return jwt.encode({"sub": user_id, "name": name, "exp": expire}, settings.jwt_secret, algorithm=settings.jwt_algorithm)
 
 
-def decode_token(token: str) -> str:
+def decode_token(token: str) -> TokenData:
     try:
         payload = jwt.decode(token, settings.jwt_secret, algorithms=[settings.jwt_algorithm])
         user_id: str | None = payload.get("sub")
+        name: str = payload.get("name", "")
         if user_id is None:
             raise DomainError("Invalid token", 401)
-        return user_id
+        return TokenData(id=user_id, name=name)
     except JWTError:
         raise DomainError("Invalid token", 401)
 
@@ -94,7 +102,7 @@ async def login_user(email: str, password: str, db: AsyncSession) -> str:
     if not user or not verify_password(password, user.hashed_password):
         raise DomainError("Invalid credentials", 401)
 
-    return create_access_token(str(user.id))
+    return create_access_token(str(user.id), user.name)
 
 
 async def request_password_reset(email: str, db: AsyncSession) -> str | None:
