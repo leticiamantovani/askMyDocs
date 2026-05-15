@@ -8,7 +8,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_vector_store
 from app.core.dependencies import create_embeddings, create_model
-from app.core.exceptions import NotFoundError
 from app.db.models import Conversation, Message
 from app.repository.document_repository import DocumentRepository
 from app.repository.message_repository import MessageRepository
@@ -79,14 +78,6 @@ class ChatService:
         self.message_repo = message_repo
         self.document_repo = document_repo
 
-    async def resolve_collection(self, document_id: UUID | None, user_id: UUID) -> str:
-        if document_id is None:
-            return f"user_{user_id}"
-        doc = await self.document_repo.get_by_id(document_id, user_id)
-        if not doc:
-            raise NotFoundError("Document not found")
-        return doc.collection_name
-
     async def stream_answer(
         self,
         conversation: Conversation,
@@ -97,7 +88,7 @@ class ChatService:
         user_name: str | None = None,
     ) -> AsyncIterator[str]:
         uid = UUID(user_id) if user_id else None
-        collection_name = await self.resolve_collection(document_id, uid)
+        collection_name = await self.document_repo.resolve_collection(document_id, uid)
 
         if document_id:
             conversation.document_id = document_id

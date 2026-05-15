@@ -21,6 +21,15 @@ class DocumentRepository:
         )
         return list(result.scalars().all())
 
+    async def resolve_collection(self, document_id: UUID | None, user_id: UUID) -> str:
+        if document_id is None:
+            return f"user_{user_id}"
+        doc = await self.get_by_id(document_id, user_id)
+        if not doc:
+            from app.core.exceptions import NotFoundError
+            raise NotFoundError("Document not found")
+        return doc.collection_name
+
     async def get_by_id(self, document_id: UUID, user_id: UUID) -> Document | None:
         result = await self.db.execute(
             select(Document).where(Document.id == document_id, Document.user_id == user_id)
