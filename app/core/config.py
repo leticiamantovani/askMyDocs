@@ -1,7 +1,6 @@
 import os
 
 from dotenv import load_dotenv
-from langchain_postgres import PGVector
 from pydantic_settings import BaseSettings
 
 load_dotenv()
@@ -19,16 +18,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-
-
-def get_vector_store(embeddings, collection_name):
-    sync_url = (
-        os.getenv("DATABASE_URL", "")
-        .replace("postgresql+asyncpg://", "postgresql://", 1)
-        .replace("ssl=require", "sslmode=require")
-    )
-    return PGVector(
-        embeddings=embeddings,
-        collection_name=collection_name,
-        connection=sync_url,
-    )
