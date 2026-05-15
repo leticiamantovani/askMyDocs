@@ -18,5 +18,6 @@ class MessageRepository:
         )
         return list(result.scalars())
 
-    def add(self, message: Message) -> None:
-        self.db.add(message)
+    async def save(self, conversation_id: UUID, content: str, role: str) -> None:
+        self.db.add(Message(conversation_id=conversation_id, content=content, role=role))
+        await self.db.commit()

@@ -106,10 +106,7 @@ class ChatService:
         if auto_title:
             conversation.title = auto_title
 
-        self.message_repo.add(
-            Message(conversation_id=conversation.id, content=question, role="user")
-        )
-        await self.db.commit()
+        await self.message_repo.save(conversation.id, question, "user")
 
         run_id = uuid4()
         return self._stream(conversation, question, collection_name, history, run_id, user_id, user_name)
@@ -151,11 +148,4 @@ class ChatService:
                         yield token
         finally:
             if buffer:
-                self.message_repo.add(
-                    Message(
-                        conversation_id=conversation.id,
-                        content="".join(buffer),
-                        role="assistant",
-                    )
-                )
-                await self.db.commit()
+                await self.message_repo.save(conversation.id, "".join(buffer), "assistant")
