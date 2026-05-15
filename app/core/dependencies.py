@@ -71,12 +71,18 @@ def get_conversation_service(
     return ConversationService(db, conversation_repo, message_repo)
 
 
+def get_document_repository(db: AsyncSession = Depends(get_db)):
+    from app.repository.document_repository import DocumentRepository
+    return DocumentRepository(db)
+
+
 def get_chat_service(
     db: AsyncSession = Depends(get_db),
     message_repo=Depends(get_message_repository),
+    document_repo=Depends(get_document_repository),
 ):
     from app.services.chat_service import ChatService
-    return ChatService(db, message_repo)
+    return ChatService(db, message_repo, document_repo)
 
 
 _bearer = HTTPBearer()
