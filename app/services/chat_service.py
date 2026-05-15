@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import Conversation, Message
 from app.llm.streaming import stream_graph_events
-from app.rag.pipeline import RAGState, build_rag_graph
+from app.rag.pipeline import RAGState, get_rag_graph
 from app.repository.document_repository import DocumentRepository
 from app.repository.message_repository import MessageRepository
 
@@ -16,12 +16,10 @@ class ChatService:
         db: AsyncSession,
         message_repo: MessageRepository,
         document_repo: DocumentRepository,
-        model,
     ):
         self.db = db
         self.message_repo = message_repo
         self.document_repo = document_repo
-        self._graph = build_rag_graph(model)
 
     async def stream_answer(
         self,
@@ -69,7 +67,7 @@ class ChatService:
 
         buffer: list[str] = []
         try:
-            async for token in stream_graph_events(self._graph, initial_state, run_id, user_id):
+            async for token in stream_graph_events(get_rag_graph(), initial_state, run_id, user_id):
                 buffer.append(token)
                 yield token
         finally:

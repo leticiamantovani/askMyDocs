@@ -5,7 +5,6 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import AsyncSessionLocal
-from app.llm.client import get_model
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
@@ -47,7 +46,7 @@ def get_chat_service(
     document_repo=Depends(get_document_repository),
 ):
     from app.services.chat_service import ChatService
-    return ChatService(db, message_repo, document_repo, get_model())
+    return ChatService(db, message_repo, document_repo)
 
 
 _bearer = HTTPBearer()
