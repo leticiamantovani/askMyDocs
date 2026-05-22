@@ -1,12 +1,14 @@
 langchain
 langchain-google-genai
-python-dotenv
-langchain-text-splitters
-pypdf
 langchain-core
+langchain-text-splitters
 langchain-postgres
+langsmith
+langgraph
+python-dotenv
+pypdf
 fastapi
-uvicorn
+uvicorn[standard]
 python-multipart
 alembic
 sqlalchemy
@@ -14,3 +16,7 @@ asyncpg
 psycopg2-binary
 python-jose[cryptography]
 passlib[bcrypt]
+bcrypt
+pydantic[email]
+pydantic-settings
+mailtrap
