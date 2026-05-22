@@ -1,3 +1,4 @@
+import logging
 from uuid import UUID, uuid4
 
 from fastapi import UploadFile
@@ -10,12 +11,15 @@ from app.ingestion.splitter import split_text
 from app.repository.document_repository import DocumentRepository
 from app.schema.documents import DocumentResponse
 
+logger = logging.getLogger(__name__)
+
 
 async def upload_pdf_service(
     user_id: UUID,
     file: UploadFile,
     db: AsyncSession,
 ) -> DocumentResponse:
+    logger.info("upload start user=%s file=%s", user_id, file.filename)
     content = await file.read()
     text = extract_text_from_pdf(content)
 
@@ -23,6 +27,7 @@ async def upload_pdf_service(
     collection_name = f"user_{user_id}_{doc_id}"
 
     chunks = split_text(text)
+    logger.info("indexing %d chunks user=%s file=%s", len(chunks), user_id, file.filename)
     await index_chunks(chunks, collection_name)
 
     document = Document(

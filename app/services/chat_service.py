@@ -1,3 +1,4 @@
+import logging
 from collections.abc import AsyncIterator
 from uuid import UUID, uuid4
 
@@ -8,6 +9,9 @@ from app.llm.streaming import stream_graph_events
 from app.rag.pipeline import RAGState, get_rag_graph
 from app.repository.document_repository import DocumentRepository
 from app.repository.message_repository import MessageRepository
+
+logger = logging.getLogger(__name__)
+
 
 
 class ChatService:
@@ -65,11 +69,15 @@ class ChatService:
             "user_name": user_name,
         }
 
+        logger.info("Starting stream for conversation=%s user=%s", conversation.id, user_id)
         buffer: list[str] = []
         try:
             async for token in stream_graph_events(get_rag_graph(), initial_state, run_id, user_id):
                 buffer.append(token)
                 yield token
+        except Exception:
+            logger.exception("Stream failed for conversation=%s", conversation.id)
+            raise
         finally:
             if buffer:
                 await self.message_repo.save(conversation.id, "".join(buffer), "assistant")
