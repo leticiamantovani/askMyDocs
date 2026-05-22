@@ -15,10 +15,11 @@ async def build_prompt(
     prompt_template = await registry.resolve("rag-prompt", user_id=user_id)
 
     history_block = "\n".join(f"{m.role}: {m.content}" for m in history)
+    user_name_header = f"Hi {user_name},\n\n" if user_name else ""
     return await asyncio.to_thread(
         prompt_template.format,
         context=context,
         history=history_block,
         question=question,
-        user_name=user_name or "",
+        user_name=user_name_header,
     )
