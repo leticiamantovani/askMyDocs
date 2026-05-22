@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.routers import auth, chat, conversations, documents, feedback, upload
+from app.core.config import settings
 from app.core.exceptions import DomainError
 
 logger = logging.getLogger(__name__)
@@ -16,7 +17,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5173", settings.frontend_url],
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["X-Conversation-ID"],
