@@ -1,3 +1,5 @@
+pytest
+pytest-asyncio
 langchain
 langchain-google-genai
 langchain-core
