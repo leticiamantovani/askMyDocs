@@ -3,6 +3,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.db.models import Message
 
 
@@ -10,7 +11,7 @@ class MessageRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def list_by_conversation(self, conversation_id: UUID, limit: int = 20) -> list[Message]:
+    async def list_by_conversation(self, conversation_id: UUID, limit: int = settings.conversation_history_window) -> list[Message]:
         result = await self.db.execute(
             select(Message)
             .where(Message.conversation_id == conversation_id)
