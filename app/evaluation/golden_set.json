@@ -1,0 +1,27 @@
+[
+  {
+    "question": "How many years of experience does Leticia have?",
+    "ground_truth": "She has over 6 years of experience in backend engineering, cloud architecture, and AI-powered systems.",
+    "collection_name": "user_91a3be33-c07d-4696-84a4-8deef5bd2078_46707f85-63a1-4466-9427-71ac9f76e40c"
+  },
+  {
+    "question": "By how much did she improve API performance?",
+    "ground_truth": "She improved API performance by 65%, achieving 65% faster response times through optimized database queries.",
+    "collection_name": "user_91a3be33-c07d-4696-84a4-8deef5bd2078_46707f85-63a1-4466-9427-71ac9f76e40c"
+  },
+  {
+    "question": "How many events per day does the scheduling system process?",
+    "ground_truth": "The scheduling system processes over 100,000 events per day.",
+    "collection_name": "user_91a3be33-c07d-4696-84a4-8deef5bd2078_46707f85-63a1-4466-9427-71ac9f76e40c"
+  },
+  {
+    "question": "At which company did she work as Backend Developer & AI Engineer, and during what period?",
+    "ground_truth": "At Anota AI, from February 2024 to September 2025.",
+    "collection_name": "user_91a3be33-c07d-4696-84a4-8deef5bd2078_46707f85-63a1-4466-9427-71ac9f76e40c"
+  },
+  {
+    "question": "What reduction in deployment time did she achieve on the CI/CD pipelines?",
+    "ground_truth": "A 40% reduction in deployment time, achieved by optimizing CI/CD pipelines on GCP.",
+    "collection_name": "user_91a3be33-c07d-4696-84a4-8deef5bd2078_46707f85-63a1-4466-9427-71ac9f76e40c"
+  }
+]
