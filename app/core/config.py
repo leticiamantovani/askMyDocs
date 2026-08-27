@@ -17,5 +17,17 @@ class Settings(BaseSettings):
     bug_report_email: str = os.getenv("BUG_REPORT_EMAIL", "")
     conversation_history_window: int = 20
 
+    @property
+    def allowed_origins(self) -> list[str]:
+        """CORS origins: local dev plus every URL in FRONTEND_URL.
+
+        FRONTEND_URL accepts a comma-separated list (prod + preview deploys).
+        Trailing slashes are stripped because the browser's Origin header
+        never has one, and CORSMiddleware compares the strings exactly.
+        """
+        configured = [u.strip().rstrip("/") for u in self.frontend_url.split(",")]
+        origins = ["http://localhost:5173", *filter(None, configured)]
+        return list(dict.fromkeys(origins))
+
 
 settings = Settings()
