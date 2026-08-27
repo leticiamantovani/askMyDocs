@@ -1,5 +1,0 @@
-# Dependencias apenas para a avaliacao offline (RAGAS).
-# NAO instale isto em producao — puxa datasets, instructor, langchain-openai etc.
-# Uso: pip install -r app/evaluation/requirements-eval.txt
-ragas==0.4.3
-datasets
