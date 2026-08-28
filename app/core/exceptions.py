@@ -18,6 +18,11 @@ class ValidationError(DomainError):
     status_code = 400
 
 
+class PayloadTooLargeError(DomainError):
+    """Request body or uploaded file exceeds the allowed size."""
+    status_code = 413
+
+
 class ConflictError(DomainError):
     """Resource conflict (e.g. duplicate)."""
     status_code = 409
