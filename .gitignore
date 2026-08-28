@@ -3,6 +3,3 @@
 .env
 __pycache__/
 *.pyc
-
-# eval outputs (RAGAS)
-ragas_results.csv
