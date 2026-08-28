@@ -22,3 +22,4 @@ bcrypt
 pydantic[email]
 pydantic-settings
 mailtrap
+httpx
