@@ -5,6 +5,10 @@ A full-stack Retrieval-Augmented Generation (RAG) chatbot that lets users upload
 Built with FastAPI, LangChain, LangGraph, Google Gemini, and React 19.
 
 ---
+# Demo
+
+https://ask-my-docs-cyan.vercel.app/login
+---
 
 ## Table of Contents
 
